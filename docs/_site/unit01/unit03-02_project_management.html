@@ -1,0 +1,469 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.19.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Project Management and Agile Data Science | Lab of Environmental Informatics</title>
+<meta name="description" content="“Managing a project effectively means thinking before acting[…].” (Portny &amp; Austin 2002)  A note on project management Creativity in research and project management are not incompatible. In fact, most if not all research requires the definition of some kind of aim or the organization of tasks in time schedules. Project requirements that define tasks might not be developed or even known at some stage of the project but project management is not a stiff corset.  Common project management steps are:    Define the project and its goals,   Break down the project into tasks and define a schedule,   Design workflows for each task and implement them,   Adjust your tasks, solve problems and be flexible.   While many project management solutions are available, the GitHub project board feature might be all you ever need at least during your course of study.  For a more detailed look, see e.g. the paper of (Portny &amp; Austin 2002) cited above on project management for scientists.                      	CC-BY by projectcartoon.com       A note on using Git and other tools for supporting scientific analysis You already got in contact with Git version control and the issue tracker and project board features of GitHub. These tools also allow full flexibility and at the same time ensure that your workflow and analysis progress is transparent, documented and re-usable. As for software development, agile approaches in data science can help to link required software engineering to the nature of science and scientific analysis (see e.g. a blog entry at O’Reilly promoting a manifesto for Agile data science](https://www.oreilly.com/ideas/a-manifesto-for-agile-data-science){:target=”_blank”}).  A real world example on how data science tools helped to do better science can be found in the publication by Lowndes et al. (2017) who describes their work on the Ocean Health Index.  A note on manual vs. automatic workflows Deciding if an analysis workflow is directly included into a script or into an easier reusable function is not always simple. For starters, do not focus on automation but focus on using loops for repeating tasks and implement features you already know that you will need several times for different input datasets as function.                      	CC-BY by xkcd.com      ">
+
+
+  <meta name="author" content="Chris Reudenbach">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Lab of Environmental Informatics">
+<meta property="og:title" content="Project Management and Agile Data Science">
+<meta property="og:url" content="http://localhost:4000/moer-mpg-rsgi-basics/unit01/unit03-02_project_management.html">
+
+
+  <meta property="og:description" content="“Managing a project effectively means thinking before acting[…].” (Portny &amp; Austin 2002)  A note on project management Creativity in research and project management are not incompatible. In fact, most if not all research requires the definition of some kind of aim or the organization of tasks in time schedules. Project requirements that define tasks might not be developed or even known at some stage of the project but project management is not a stiff corset.  Common project management steps are:    Define the project and its goals,   Break down the project into tasks and define a schedule,   Design workflows for each task and implement them,   Adjust your tasks, solve problems and be flexible.   While many project management solutions are available, the GitHub project board feature might be all you ever need at least during your course of study.  For a more detailed look, see e.g. the paper of (Portny &amp; Austin 2002) cited above on project management for scientists.                      	CC-BY by projectcartoon.com       A note on using Git and other tools for supporting scientific analysis You already got in contact with Git version control and the issue tracker and project board features of GitHub. These tools also allow full flexibility and at the same time ensure that your workflow and analysis progress is transparent, documented and re-usable. As for software development, agile approaches in data science can help to link required software engineering to the nature of science and scientific analysis (see e.g. a blog entry at O’Reilly promoting a manifesto for Agile data science](https://www.oreilly.com/ideas/a-manifesto-for-agile-data-science){:target=”_blank”}).  A real world example on how data science tools helped to do better science can be found in the publication by Lowndes et al. (2017) who describes their work on the Ocean Health Index.  A note on manual vs. automatic workflows Deciding if an analysis workflow is directly included into a script or into an easier reusable function is not always simple. For starters, do not focus on automation but focus on using loops for repeating tasks and implement features you already know that you will need several times for different input datasets as function.                      	CC-BY by xkcd.com      ">
+
+
+
+
+
+  <meta name="twitter:site" content="@creuden">
+  <meta name="twitter:title" content="Project Management and Agile Data Science">
+  <meta name="twitter:description" content="“Managing a project effectively means thinking before acting[…].” (Portny &amp; Austin 2002)  A note on project management Creativity in research and project management are not incompatible. In fact, most if not all research requires the definition of some kind of aim or the organization of tasks in time schedules. Project requirements that define tasks might not be developed or even known at some stage of the project but project management is not a stiff corset.  Common project management steps are:    Define the project and its goals,   Break down the project into tasks and define a schedule,   Design workflows for each task and implement them,   Adjust your tasks, solve problems and be flexible.   While many project management solutions are available, the GitHub project board feature might be all you ever need at least during your course of study.  For a more detailed look, see e.g. the paper of (Portny &amp; Austin 2002) cited above on project management for scientists.                      	CC-BY by projectcartoon.com       A note on using Git and other tools for supporting scientific analysis You already got in contact with Git version control and the issue tracker and project board features of GitHub. These tools also allow full flexibility and at the same time ensure that your workflow and analysis progress is transparent, documented and re-usable. As for software development, agile approaches in data science can help to link required software engineering to the nature of science and scientific analysis (see e.g. a blog entry at O’Reilly promoting a manifesto for Agile data science](https://www.oreilly.com/ideas/a-manifesto-for-agile-data-science){:target=”_blank”}).  A real world example on how data science tools helped to do better science can be found in the publication by Lowndes et al. (2017) who describes their work on the Ocean Health Index.  A note on manual vs. automatic workflows Deciding if an analysis workflow is directly included into a script or into an easier reusable function is not always simple. For starters, do not focus on automation but focus on using loops for repeating tasks and implement features you already know that you will need several times for different input datasets as function.                      	CC-BY by xkcd.com      ">
+  <meta name="twitter:url" content="http://localhost:4000/moer-mpg-rsgi-basics/unit01/unit03-02_project_management.html">
+
+  
+    <meta name="twitter:card" content="summary">
+    
+  
+
+  
+    <meta name="twitter:creator" content="@geographie_umr">
+  
+
+
+
+  <meta property="article:published_time" content="2022-03-11T20:51:16+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/moer-mpg-rsgi-basics/unit01/unit03-02_project_management.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Lab of Environmental Informatics",
+      "url": "http://localhost:4000/moer-mpg-rsgi-basics/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/moer-mpg-rsgi-basics/feed.xml" type="application/atom+xml" rel="alternate" title="Lab of Environmental Informatics Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/moer-mpg-rsgi-basics/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+    	<a class="site-title" href="http://localhost:4000/moer-mpg-rsgi-basics/" style="padding:0px"><img src="http://localhost:4000/moer-mpg-rsgi-basics/assets/images/logo_umr.png" style="padding-right:15px">Lab of Environmental Informatics</a>
+        <ul class="visible-links">
+          
+            
+            <li class="masthead__menu-item">
+              <a href="http://localhost:4000/moer-mpg-rsgi-basics//units.html" >Course units</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="http://localhost:4000/moer-mpg-rsgi-basics//unit00/unit00-04_faq.html" >FAQ</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="https://ilias.uni-marburg.de/ilias.php?baseClass=ilRepositoryGUI&amp;client_id=UNIMR" >Zu ILIAS</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="https://oer.uni-marburg.de/goto.php?target=cat_1651239&client_id=UNIMR" >OER home</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="http://localhost:4000/moer-mpg-rsgi-basics//index.html" >Course home</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="http://localhost:4000/moer-mpg-rsgi-basics//downloads.html" >Downloads</a>
+            </li>
+          
+        </ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle Menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+<div id="main" role="main">
+  
+
+  <div class="sidebar sticky">
+  
+
+  
+    
+      
+      
+      
+    
+    
+	  
+        <nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle Menu</label>
+  <ul class="nav__items">
+    
+      
+      
+    
+      
+      
+    
+      
+      
+        
+        <li>
+          <span class="nav__sub-title">
+		     <a href="/moer-mpg-rsgi-basics//unit00/unit00-00_intro.html" class="">Some Formalities</a>
+		  </span>
+          <ul>
+            
+              
+			  
+            
+              
+			  
+            
+              
+			  
+            
+          </ul>
+        </li>
+	  
+    
+      
+      
+        
+        <li>
+          <span class="nav__sub-title">
+		     <a href="/moer-mpg-rsgi-basics//unit01/unit01-01_data_softwares.html" class="">Questions & Answers</a>
+		  </span>
+          <ul>
+            
+              
+			  
+			    <li><a href="/moer-mpg-rsgi-basics//unit01/unit01-01_data_softwares.html" class="">Data and Software</a></li>
+			  
+            
+              
+			  
+			    <li><a href="/moer-mpg-rsgi-basics//unit01/unit01-02_giving_answers.html" class="">Science - Asking Questions Giving Answers</a></li>
+			  
+            
+              
+			  
+			    <li><a href="/moer-mpg-rsgi-basics//unit01/unit02-18_github_project_board.html" class="">GitHub Project Board</a></li>
+			  
+            
+              
+			  
+			    <li><a href="/moer-mpg-rsgi-basics//unit01/unit03-02_project_management.html" class="active">Project Management and Agile Data Science</a></li>
+			  
+            
+          </ul>
+        </li>
+	  
+    
+      
+      
+    
+      
+      
+        
+        <li>
+          <span class="nav__sub-title">
+		     <a href="/moer-mpg-rsgi-basics//unit05/unit05-01_spotlights.html" class="">Spotlights</a>
+		  </span>
+          <ul>
+            
+              
+			  
+            
+              
+			  
+            
+              
+			  
+            
+              
+			  
+            
+          </ul>
+        </li>
+	  
+    
+  </ul>
+</nav>
+	  
+    
+  
+  </div>
+  
+
+
+
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Project Management and Agile Data Science">
+    <meta itemprop="description" content="“Managing a project effectively means thinking before acting[…].” (Portny &amp; Austin 2002)A note on project managementCreativity in research and project management are not incompatible. In fact, most if not all research requires the definition of some kind of aim or the organization of tasks in time schedules. Project requirements that define tasks might not be developed or even known at some stage of the project but project management is not a stiff corset.Common project management steps are:  Define the project and its goals,  Break down the project into tasks and define a schedule,  Design workflows for each task and implement them,  Adjust your tasks, solve problems and be flexible.While many project management solutions are available, the GitHub project board feature might be all you ever need at least during your course of study.For a more detailed look, see e.g. the paper of (Portny &amp; Austin 2002) cited above on project management for scientists.            	CC-BY by projectcartoon.com  A note on using Git and other tools for supporting scientific analysisYou already got in contact with Git version control and the issue tracker and project board features of GitHub. These tools also allow full flexibility and at the same time ensure that your workflow and analysis progress is transparent, documented and re-usable. As for software development, agile approaches in data science can help to link required software engineering to the nature of science and scientific analysis (see e.g. a blog entry at O’Reilly promoting a manifesto for Agile data science](https://www.oreilly.com/ideas/a-manifesto-for-agile-data-science){:target=”_blank”}).A real world example on how data science tools helped to do better science can be found in the publication by Lowndes et al. (2017) who describes their work on the Ocean Health Index.A note on manual vs. automatic workflowsDeciding if an analysis workflow is directly included into a script or into an easier reusable function is not always simple. For starters, do not focus on automation but focus on using loops for repeating tasks and implement features you already know that you will need several times for different input datasets as function.            	CC-BY by xkcd.com  ">
+    <meta itemprop="datePublished" content="2022-03-11T20:51:16+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Project Management and Agile Data Science
+</h1>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#a-note-on-project-management">A note on project management</a></li>
+  <li><a href="#a-note-on-using-git-and-other-tools-for-supporting-scientific-analysis">A note on using Git and other tools for supporting scientific analysis</a></li>
+  <li><a href="#a-note-on-manual-vs-automatic-workflows">A note on manual vs. automatic workflows</a></li>
+</ul>
+
+            </nav>
+          </aside>
+        
+        <p>“Managing a project effectively means thinking before acting[…].” <a href="https://www.sciencemag.org/careers/2002/07/project-management-scientists" target="_blank">(Portny &amp; Austin 2002)</a></p>
+
+<h2 id="a-note-on-project-management">A note on project management</h2>
+<p>Creativity in research and project management are not incompatible. In fact, most if not all research requires the definition of some kind of aim or the organization of tasks in time schedules. Project requirements that define tasks might not be developed or even known at some stage of the project but project management is not a stiff corset.</p>
+
+<p>Common project management steps are:</p>
+<ul>
+  <li>Define the project and its goals,</li>
+  <li>Break down the project into tasks and define a schedule,</li>
+  <li>Design workflows for each task and implement them,</li>
+  <li>Adjust your tasks, solve problems and be flexible.</li>
+</ul>
+
+<p>While many project management solutions are available, the GitHub project board feature might be all you ever need at least during your course of study.</p>
+
+<p>For a more detailed look, see e.g. the paper of <a href="https://www.sciencemag.org/careers/2002/07/project-management-scientists" target="_blank">(Portny &amp; Austin 2002)</a> cited above on project management for scientists.</p>
+
+<figure class="">
+
+  
+    <img src="http://localhost:4000/moer-mpg-rsgi-basics/assets/images/project_workflow.jpg" alt="Picture illustratinc a project workflow as a comic." />
+  
+
+  
+  
+	<figcaption><a href="http://www.projectcartoon.com/cartoon/2100083/new" target="_blank">CC-BY by projectcartoon.com</a>
+</figcaption>
+  
+</figure>
+
+<h2 id="a-note-on-using-git-and-other-tools-for-supporting-scientific-analysis">A note on using Git and other tools for supporting scientific analysis</h2>
+<p>You already got in contact with Git version control and the issue tracker and project board features of GitHub. These tools also allow full flexibility and at the same time ensure that your workflow and analysis progress is transparent, documented and re-usable. As for software development, agile approaches in data science can help to link required software engineering to the nature of science and scientific analysis (see e.g. a blog entry at O’Reilly promoting a manifesto for Agile data science](https://www.oreilly.com/ideas/a-manifesto-for-agile-data-science){:target=”_blank”}).</p>
+
+<p class="notice--info">A real world example on how data science tools helped to do better science can be found in the publication by <a href="https://www.nature.com/articles/s41559-017-0160" target="_blank">Lowndes et al. (2017)</a> who describes their work on the Ocean Health Index.</p>
+
+<h2 id="a-note-on-manual-vs-automatic-workflows">A note on manual vs. automatic workflows</h2>
+<p>Deciding if an analysis workflow is directly included into a script or into an easier reusable function is not always simple. For starters, do not focus on automation but focus on using loops for repeating tasks and implement features you already know that you will need several times for different input datasets as function.</p>
+
+<figure class="">
+
+  
+    <img src="https://imgs.xkcd.com/comics/automation.png" alt="Picture illustratinc a project workflow as a comic." />
+  
+
+  
+  
+	<figcaption><a href="https://xkcd.com/1319/" target="_blank">CC-BY by xkcd.com</a>
+</figcaption>
+  
+</figure>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2022-03-11T20:51:16+01:00">March 11, 2022</time></p>
+        
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/moer-mpg-rsgi-basics/unit01/unit02-18_github_project_board.html" class="pagination--pager" title="GitHub Project Board
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+    
+      <li><a href="https://twitter.com/creuden"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+    
+    
+    
+      <li><a href="https://github.com/GeoMOER"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    
+    <li><a href="http://localhost:4000/moer-mpg-rsgi-basics/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright"> <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a> &copy; 2022 Lab of Environmental Informatics
+. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a>, <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> &amp; <a href="https://www.uni-marburg.de/fb19" rel="nofollow">Geography@Marburg University</a>.</div>
+
+
+
+      </footer>
+    </div>
+
+    
+  <script src="/moer-mpg-rsgi-basics/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

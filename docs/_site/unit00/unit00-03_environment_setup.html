@@ -1,0 +1,608 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.19.1 by Michael Rose
+  Copyright 2013-2019 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Setting up the Working Environment | Lab of Environmental Informatics</title>
+<meta name="description" content="We value freedom of choice as an important good but giving our long-term experience freedom of choice comes to an end when we talk about the mandatory working environment for this course. The reason for this is simple: you work with assignments and a piece of code written on the laptop of person A should run basically without any changes on the computer of person B. The situation gets nastier if you should test some code of a peer or if the instructors would like to run your script on their own system. Hence, let’s save everybody’s time and focus on the things which are really important. Once the course is finished, feel free to use any working environment structure you like.  Setup of the environment in R  Setting up a working or project environment usually requires the definition and creation of different folder paths, the loading of necessary R packages and additional functions that are “always” needed. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too. Setting up a working or project environment requires the definition of different folder paths and the loading of necessary R packages and additional functions. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too.  For setting up a project environment, one can use a set-up script and the envimaR package.  Coping with different absolute paths across different computers The biggest problem when it comes to cross-computer project path environments is not the project environment itself, i.e. the subfolders of your project relative to your project folder but the absolute path to your project folder. Imagine you agreed on a project folder called mpg-envinsys-plygrnd. On the laptop of person A, the absolute path to the root folder might be C:\Users\UserA\University\mpg-envinsys-plygrnd while on the external hard disk of person B it might be X:\university_courses\mpg-envinsys-plygrnd. If you want to read from your data subfolder you have to change the absolute directory path depending on which computer the script is running. Not good.  One solution to this problem is to agree on a common structure relative to your individual R home directory using symbolic links (Linux flavor systems) or junctions (Windows flavor systems).  Example: Create a top-level folder name which hosts all of your student projects. For example, this folder is called edu. Within edu, the project folder of this course is called mpg-envinsys-plygrnd. Create the folder edu anywhere you want, e.g. at D:\stuff\important\edu. Then create a so called symbolic link to this folder within your R home directory i.e. the directory where path.expand(&quot;~&quot;) points to.  To create this link on Windows flavor systems, start a command prompt window (e.g. press [Windows], type “CMD”, press [Return]) and change the directory of the command prompt window to your R home directory which is C:\Users\your-user-name\Documents by default. Then use the mklink \J command to create the symbolic link. In summary and given the paths above:  cd C:\Users\your-user-name\Documents mklink /J edu D:\stuff\important\edu   On Linux flavor systems, the R home directory is your home directory by default, i.e. /home/your-user-name/. If you create your edu folder on /media/memory/interesting/edu, the symbolic link can be created using your bash environment: cd /home/&lt;your-user-name&gt;/ ln -s /media/memory/interesting/edu edu  Now one can access the edu folder on both the windows and the Linux example via the home directory, i.e. ~/edu/. All problems solved.  While this will work on all of your private computers, it will not work on the ones in the University’s computer lab. To handle that as smooth as possible, you can use the functionality of the envimaR package which allows to set defaults for all computers but one special type which is handled differently.  Basic workflow of the setup procedure  There are two aspects we would draw your attention to:    Define everything once not twice: It is a good idea to define your project folder structure, the required libraries and other settings in one place. A simple approach would be a setup script, i.e. something like 000_setup.R that is sourced into each control or analysis script of your project.   Use the same project folder structure in a team: Use the same folder structure relative to a fixed starting point across all computers and devices of your team. As a starting point, a folder in your home directory  (e.g. ~/edu) is a good choice. Within this folder you can directly store your projects or use a symlink to any other place on your storage devices. 1   Special considerations at our computer labs The R home directory on the computers in the labs at Marburg University points to the network drive H:/Documents. For storage space reasons, you could not use this drive for symlinks. Therefore, you have to define an alternative starting point for your project folders to work with.  To handle your project relative on all computers using something beneath your  home directory ~ as a starting point except on one type of computer (i.e. the ones in the University computer labs), we recommend to use the functionality of the envimaR package.  Preliminary consideration Again f the course we assume that    your local starting point is ~/edu,   your project is called mpg-envinsys-plygrnd,   your git repository is called name_of_github_team_repository,   your setup script is called 000_setup.R and is located at name_of_github_team_repository/src.   Please install the envimaR package from GitHub.  devtools::install_github(&quot;envima/envimaR&quot;)   Template for setup script  First of all copy and paste the following code in a file named 000_setup.R. You may use it as a tempate for a basic setup script which is called in the beginning of each analysis script you start.  # Set project specific subfolders projectDirList   = c(&quot;data/&quot;,                # data folders the following are obligatory but you may add more                     &quot;data/auxdata/&quot;,                       &quot;data/aerial/org/&quot;,                     &quot;data/lidar/org/&quot;,                     &quot;data/lidar/&quot;,                     &quot;data/grass/&quot;,                     &quot;data/lidar/level1/&quot;,                     &quot;data/lidar/level2/&quot;,                     &quot;data/lidar/level0/&quot;,                     &quot;data/data_mof&quot;,                      &quot;data/tmp/&quot;,                     &quot;run/&quot;,                # folder for runtime data storage                     &quot;log/&quot;,                # logging                     &quot;src/&quot;,                # source code                     &quot;doc/&quot;,                # documentation                       &quot;name_of_github_team_repository/src/&quot;,   # source code github                     &quot;name_of_github_team_repository/doc/&quot;)   # markdown etc.  github # Set libraries libs = c(&quot;link2GI&quot;, &quot;raster&quot;, &quot;rgdal&quot;, &quot;sp&quot;)   # Automatically set root direcory, folder structure and load libraries envrmt = createEnvi(root_folder = &quot;~/edu/mpg-envinsys-plygrnd&quot;,                      folders = project_folders,                      path_prefix = &quot;path_&quot;, libs = libs,                     alt_env_id = &quot;COMPUTERNAME&quot;, alt_env_value = &quot;PCRZP&quot;,                     alt_env_root_folder = &quot;F:\\BEN\\edu&quot;)                      # For the `raster` package set the temp directory to the one of  project folders  rasterOptions(tmpdir = envrmt$path_tmp)    Automated procedure  To source the setup script, you should reference its location in the same manner  as any other folder/file. Therefore, include something like this into the header of your control or analysis scripts.  # Source setup script ---------------------------------------------------------- library(envimaR) root_folder = alternativeEnvi(root_folder = &quot;~/edu/mpg-envinsys-plygrnd&quot;,                                alt_env_id = &quot;COMPUTERNAME&quot;,                               alt_env_value = &quot;PCRZP&quot;,                                alt_env_root_folder = &quot;F:\\BEN\\edu&quot;) source(file.path(root_folder, &quot;name_of_github_team_repository/src/000_setup.R&quot;))   One can now access the respective subfolders using the list entries of the variable envrmt. The entries are named according to the subfolder names with the prefix “path_”.  print(envrmt$path_data_mof)   ## [1] &quot;C:/Users/tnauss/Documents/edu/mpg-envinsys-plygrnd/data/data_mof&quot;   Linking more GI/RS Desktop Software If required, on can now go on in the setup script and link selected GIS software etc. using the link2GI package. This generaly starts looking for the respective installations (in case one does not know all the details).  # Link GIS software ------------------------------------------------------------ # link2GI has been loaded by the script  # Find GRASS installations grass_path = findGRASS()  # Find SAGA installations saga_path = findSAGA()  # Find OTB installations otb_path = findOTB()   This setup is a bit more than a guideline, it is a rule. Read it, learn it, live it and have a nice ride.  More Information  For a more advanced and automated project setup have also a look at the extended setup spotlight.  For a bsic control script which may be useful as a template for a supporting structure of your script have a look at the spotlight Best Practice Scripts &amp; Functions in R  ">
+
+
+  <meta name="author" content="Chris Reudenbach">
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Lab of Environmental Informatics">
+<meta property="og:title" content="Setting up the Working Environment">
+<meta property="og:url" content="http://localhost:4000/moer-mpg-rsgi-basics/unit00/unit00-03_environment_setup.html">
+
+
+  <meta property="og:description" content="We value freedom of choice as an important good but giving our long-term experience freedom of choice comes to an end when we talk about the mandatory working environment for this course. The reason for this is simple: you work with assignments and a piece of code written on the laptop of person A should run basically without any changes on the computer of person B. The situation gets nastier if you should test some code of a peer or if the instructors would like to run your script on their own system. Hence, let’s save everybody’s time and focus on the things which are really important. Once the course is finished, feel free to use any working environment structure you like.  Setup of the environment in R  Setting up a working or project environment usually requires the definition and creation of different folder paths, the loading of necessary R packages and additional functions that are “always” needed. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too. Setting up a working or project environment requires the definition of different folder paths and the loading of necessary R packages and additional functions. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too.  For setting up a project environment, one can use a set-up script and the envimaR package.  Coping with different absolute paths across different computers The biggest problem when it comes to cross-computer project path environments is not the project environment itself, i.e. the subfolders of your project relative to your project folder but the absolute path to your project folder. Imagine you agreed on a project folder called mpg-envinsys-plygrnd. On the laptop of person A, the absolute path to the root folder might be C:\Users\UserA\University\mpg-envinsys-plygrnd while on the external hard disk of person B it might be X:\university_courses\mpg-envinsys-plygrnd. If you want to read from your data subfolder you have to change the absolute directory path depending on which computer the script is running. Not good.  One solution to this problem is to agree on a common structure relative to your individual R home directory using symbolic links (Linux flavor systems) or junctions (Windows flavor systems).  Example: Create a top-level folder name which hosts all of your student projects. For example, this folder is called edu. Within edu, the project folder of this course is called mpg-envinsys-plygrnd. Create the folder edu anywhere you want, e.g. at D:\stuff\important\edu. Then create a so called symbolic link to this folder within your R home directory i.e. the directory where path.expand(&quot;~&quot;) points to.  To create this link on Windows flavor systems, start a command prompt window (e.g. press [Windows], type “CMD”, press [Return]) and change the directory of the command prompt window to your R home directory which is C:\Users\your-user-name\Documents by default. Then use the mklink \J command to create the symbolic link. In summary and given the paths above:  cd C:\Users\your-user-name\Documents mklink /J edu D:\stuff\important\edu   On Linux flavor systems, the R home directory is your home directory by default, i.e. /home/your-user-name/. If you create your edu folder on /media/memory/interesting/edu, the symbolic link can be created using your bash environment: cd /home/&lt;your-user-name&gt;/ ln -s /media/memory/interesting/edu edu  Now one can access the edu folder on both the windows and the Linux example via the home directory, i.e. ~/edu/. All problems solved.  While this will work on all of your private computers, it will not work on the ones in the University’s computer lab. To handle that as smooth as possible, you can use the functionality of the envimaR package which allows to set defaults for all computers but one special type which is handled differently.  Basic workflow of the setup procedure  There are two aspects we would draw your attention to:    Define everything once not twice: It is a good idea to define your project folder structure, the required libraries and other settings in one place. A simple approach would be a setup script, i.e. something like 000_setup.R that is sourced into each control or analysis script of your project.   Use the same project folder structure in a team: Use the same folder structure relative to a fixed starting point across all computers and devices of your team. As a starting point, a folder in your home directory  (e.g. ~/edu) is a good choice. Within this folder you can directly store your projects or use a symlink to any other place on your storage devices. 1   Special considerations at our computer labs The R home directory on the computers in the labs at Marburg University points to the network drive H:/Documents. For storage space reasons, you could not use this drive for symlinks. Therefore, you have to define an alternative starting point for your project folders to work with.  To handle your project relative on all computers using something beneath your  home directory ~ as a starting point except on one type of computer (i.e. the ones in the University computer labs), we recommend to use the functionality of the envimaR package.  Preliminary consideration Again f the course we assume that    your local starting point is ~/edu,   your project is called mpg-envinsys-plygrnd,   your git repository is called name_of_github_team_repository,   your setup script is called 000_setup.R and is located at name_of_github_team_repository/src.   Please install the envimaR package from GitHub.  devtools::install_github(&quot;envima/envimaR&quot;)   Template for setup script  First of all copy and paste the following code in a file named 000_setup.R. You may use it as a tempate for a basic setup script which is called in the beginning of each analysis script you start.  # Set project specific subfolders projectDirList   = c(&quot;data/&quot;,                # data folders the following are obligatory but you may add more                     &quot;data/auxdata/&quot;,                       &quot;data/aerial/org/&quot;,                     &quot;data/lidar/org/&quot;,                     &quot;data/lidar/&quot;,                     &quot;data/grass/&quot;,                     &quot;data/lidar/level1/&quot;,                     &quot;data/lidar/level2/&quot;,                     &quot;data/lidar/level0/&quot;,                     &quot;data/data_mof&quot;,                      &quot;data/tmp/&quot;,                     &quot;run/&quot;,                # folder for runtime data storage                     &quot;log/&quot;,                # logging                     &quot;src/&quot;,                # source code                     &quot;doc/&quot;,                # documentation                       &quot;name_of_github_team_repository/src/&quot;,   # source code github                     &quot;name_of_github_team_repository/doc/&quot;)   # markdown etc.  github # Set libraries libs = c(&quot;link2GI&quot;, &quot;raster&quot;, &quot;rgdal&quot;, &quot;sp&quot;)   # Automatically set root direcory, folder structure and load libraries envrmt = createEnvi(root_folder = &quot;~/edu/mpg-envinsys-plygrnd&quot;,                      folders = project_folders,                      path_prefix = &quot;path_&quot;, libs = libs,                     alt_env_id = &quot;COMPUTERNAME&quot;, alt_env_value = &quot;PCRZP&quot;,                     alt_env_root_folder = &quot;F:\\BEN\\edu&quot;)                      # For the `raster` package set the temp directory to the one of  project folders  rasterOptions(tmpdir = envrmt$path_tmp)    Automated procedure  To source the setup script, you should reference its location in the same manner  as any other folder/file. Therefore, include something like this into the header of your control or analysis scripts.  # Source setup script ---------------------------------------------------------- library(envimaR) root_folder = alternativeEnvi(root_folder = &quot;~/edu/mpg-envinsys-plygrnd&quot;,                                alt_env_id = &quot;COMPUTERNAME&quot;,                               alt_env_value = &quot;PCRZP&quot;,                                alt_env_root_folder = &quot;F:\\BEN\\edu&quot;) source(file.path(root_folder, &quot;name_of_github_team_repository/src/000_setup.R&quot;))   One can now access the respective subfolders using the list entries of the variable envrmt. The entries are named according to the subfolder names with the prefix “path_”.  print(envrmt$path_data_mof)   ## [1] &quot;C:/Users/tnauss/Documents/edu/mpg-envinsys-plygrnd/data/data_mof&quot;   Linking more GI/RS Desktop Software If required, on can now go on in the setup script and link selected GIS software etc. using the link2GI package. This generaly starts looking for the respective installations (in case one does not know all the details).  # Link GIS software ------------------------------------------------------------ # link2GI has been loaded by the script  # Find GRASS installations grass_path = findGRASS()  # Find SAGA installations saga_path = findSAGA()  # Find OTB installations otb_path = findOTB()   This setup is a bit more than a guideline, it is a rule. Read it, learn it, live it and have a nice ride.  More Information  For a more advanced and automated project setup have also a look at the extended setup spotlight.  For a bsic control script which may be useful as a template for a supporting structure of your script have a look at the spotlight Best Practice Scripts &amp; Functions in R  ">
+
+
+
+  <meta property="og:image" content="http://localhost:4000/moer-mpg-rsgi-basics/assets/images/working-environment.png">
+
+
+
+  <meta name="twitter:site" content="@creuden">
+  <meta name="twitter:title" content="Setting up the Working Environment">
+  <meta name="twitter:description" content="We value freedom of choice as an important good but giving our long-term experience freedom of choice comes to an end when we talk about the mandatory working environment for this course. The reason for this is simple: you work with assignments and a piece of code written on the laptop of person A should run basically without any changes on the computer of person B. The situation gets nastier if you should test some code of a peer or if the instructors would like to run your script on their own system. Hence, let’s save everybody’s time and focus on the things which are really important. Once the course is finished, feel free to use any working environment structure you like.  Setup of the environment in R  Setting up a working or project environment usually requires the definition and creation of different folder paths, the loading of necessary R packages and additional functions that are “always” needed. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too. Setting up a working or project environment requires the definition of different folder paths and the loading of necessary R packages and additional functions. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too.  For setting up a project environment, one can use a set-up script and the envimaR package.  Coping with different absolute paths across different computers The biggest problem when it comes to cross-computer project path environments is not the project environment itself, i.e. the subfolders of your project relative to your project folder but the absolute path to your project folder. Imagine you agreed on a project folder called mpg-envinsys-plygrnd. On the laptop of person A, the absolute path to the root folder might be C:\Users\UserA\University\mpg-envinsys-plygrnd while on the external hard disk of person B it might be X:\university_courses\mpg-envinsys-plygrnd. If you want to read from your data subfolder you have to change the absolute directory path depending on which computer the script is running. Not good.  One solution to this problem is to agree on a common structure relative to your individual R home directory using symbolic links (Linux flavor systems) or junctions (Windows flavor systems).  Example: Create a top-level folder name which hosts all of your student projects. For example, this folder is called edu. Within edu, the project folder of this course is called mpg-envinsys-plygrnd. Create the folder edu anywhere you want, e.g. at D:\stuff\important\edu. Then create a so called symbolic link to this folder within your R home directory i.e. the directory where path.expand(&quot;~&quot;) points to.  To create this link on Windows flavor systems, start a command prompt window (e.g. press [Windows], type “CMD”, press [Return]) and change the directory of the command prompt window to your R home directory which is C:\Users\your-user-name\Documents by default. Then use the mklink \J command to create the symbolic link. In summary and given the paths above:  cd C:\Users\your-user-name\Documents mklink /J edu D:\stuff\important\edu   On Linux flavor systems, the R home directory is your home directory by default, i.e. /home/your-user-name/. If you create your edu folder on /media/memory/interesting/edu, the symbolic link can be created using your bash environment: cd /home/&lt;your-user-name&gt;/ ln -s /media/memory/interesting/edu edu  Now one can access the edu folder on both the windows and the Linux example via the home directory, i.e. ~/edu/. All problems solved.  While this will work on all of your private computers, it will not work on the ones in the University’s computer lab. To handle that as smooth as possible, you can use the functionality of the envimaR package which allows to set defaults for all computers but one special type which is handled differently.  Basic workflow of the setup procedure  There are two aspects we would draw your attention to:    Define everything once not twice: It is a good idea to define your project folder structure, the required libraries and other settings in one place. A simple approach would be a setup script, i.e. something like 000_setup.R that is sourced into each control or analysis script of your project.   Use the same project folder structure in a team: Use the same folder structure relative to a fixed starting point across all computers and devices of your team. As a starting point, a folder in your home directory  (e.g. ~/edu) is a good choice. Within this folder you can directly store your projects or use a symlink to any other place on your storage devices. 1   Special considerations at our computer labs The R home directory on the computers in the labs at Marburg University points to the network drive H:/Documents. For storage space reasons, you could not use this drive for symlinks. Therefore, you have to define an alternative starting point for your project folders to work with.  To handle your project relative on all computers using something beneath your  home directory ~ as a starting point except on one type of computer (i.e. the ones in the University computer labs), we recommend to use the functionality of the envimaR package.  Preliminary consideration Again f the course we assume that    your local starting point is ~/edu,   your project is called mpg-envinsys-plygrnd,   your git repository is called name_of_github_team_repository,   your setup script is called 000_setup.R and is located at name_of_github_team_repository/src.   Please install the envimaR package from GitHub.  devtools::install_github(&quot;envima/envimaR&quot;)   Template for setup script  First of all copy and paste the following code in a file named 000_setup.R. You may use it as a tempate for a basic setup script which is called in the beginning of each analysis script you start.  # Set project specific subfolders projectDirList   = c(&quot;data/&quot;,                # data folders the following are obligatory but you may add more                     &quot;data/auxdata/&quot;,                       &quot;data/aerial/org/&quot;,                     &quot;data/lidar/org/&quot;,                     &quot;data/lidar/&quot;,                     &quot;data/grass/&quot;,                     &quot;data/lidar/level1/&quot;,                     &quot;data/lidar/level2/&quot;,                     &quot;data/lidar/level0/&quot;,                     &quot;data/data_mof&quot;,                      &quot;data/tmp/&quot;,                     &quot;run/&quot;,                # folder for runtime data storage                     &quot;log/&quot;,                # logging                     &quot;src/&quot;,                # source code                     &quot;doc/&quot;,                # documentation                       &quot;name_of_github_team_repository/src/&quot;,   # source code github                     &quot;name_of_github_team_repository/doc/&quot;)   # markdown etc.  github # Set libraries libs = c(&quot;link2GI&quot;, &quot;raster&quot;, &quot;rgdal&quot;, &quot;sp&quot;)   # Automatically set root direcory, folder structure and load libraries envrmt = createEnvi(root_folder = &quot;~/edu/mpg-envinsys-plygrnd&quot;,                      folders = project_folders,                      path_prefix = &quot;path_&quot;, libs = libs,                     alt_env_id = &quot;COMPUTERNAME&quot;, alt_env_value = &quot;PCRZP&quot;,                     alt_env_root_folder = &quot;F:\\BEN\\edu&quot;)                      # For the `raster` package set the temp directory to the one of  project folders  rasterOptions(tmpdir = envrmt$path_tmp)    Automated procedure  To source the setup script, you should reference its location in the same manner  as any other folder/file. Therefore, include something like this into the header of your control or analysis scripts.  # Source setup script ---------------------------------------------------------- library(envimaR) root_folder = alternativeEnvi(root_folder = &quot;~/edu/mpg-envinsys-plygrnd&quot;,                                alt_env_id = &quot;COMPUTERNAME&quot;,                               alt_env_value = &quot;PCRZP&quot;,                                alt_env_root_folder = &quot;F:\\BEN\\edu&quot;) source(file.path(root_folder, &quot;name_of_github_team_repository/src/000_setup.R&quot;))   One can now access the respective subfolders using the list entries of the variable envrmt. The entries are named according to the subfolder names with the prefix “path_”.  print(envrmt$path_data_mof)   ## [1] &quot;C:/Users/tnauss/Documents/edu/mpg-envinsys-plygrnd/data/data_mof&quot;   Linking more GI/RS Desktop Software If required, on can now go on in the setup script and link selected GIS software etc. using the link2GI package. This generaly starts looking for the respective installations (in case one does not know all the details).  # Link GIS software ------------------------------------------------------------ # link2GI has been loaded by the script  # Find GRASS installations grass_path = findGRASS()  # Find SAGA installations saga_path = findSAGA()  # Find OTB installations otb_path = findOTB()   This setup is a bit more than a guideline, it is a rule. Read it, learn it, live it and have a nice ride.  More Information  For a more advanced and automated project setup have also a look at the extended setup spotlight.  For a bsic control script which may be useful as a template for a supporting structure of your script have a look at the spotlight Best Practice Scripts &amp; Functions in R  ">
+  <meta name="twitter:url" content="http://localhost:4000/moer-mpg-rsgi-basics/unit00/unit00-03_environment_setup.html">
+
+  
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="http://localhost:4000/moer-mpg-rsgi-basics/assets/images/working-environment.png">
+  
+
+  
+    <meta name="twitter:creator" content="@geographie_umr">
+  
+
+
+
+  <meta property="article:published_time" content="2022-03-11T20:51:16+01:00">
+
+
+
+
+
+
+<link rel="canonical" href="http://localhost:4000/moer-mpg-rsgi-basics/unit00/unit00-03_environment_setup.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": "Lab of Environmental Informatics",
+      "url": "http://localhost:4000/moer-mpg-rsgi-basics/"
+    
+  }
+</script>
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+<link href="/moer-mpg-rsgi-basics/feed.xml" type="application/atom+xml" rel="alternate" title="Lab of Environmental Informatics Feed">
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/moer-mpg-rsgi-basics/assets/css/main.css">
+
+<!--[if IE]>
+  <style>
+    /* old IE unsupported flexbox fixes */
+    .greedy-nav .site-title {
+      padding-right: 3em;
+    }
+    .greedy-nav button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+    }
+  </style>
+<![endif]-->
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    <nav class="skip-links">
+  <h2 class="screen-reader-text">Skip links</h2>
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    <div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+    	<a class="site-title" href="http://localhost:4000/moer-mpg-rsgi-basics/" style="padding:0px"><img src="http://localhost:4000/moer-mpg-rsgi-basics/assets/images/logo_umr.png" style="padding-right:15px">Lab of Environmental Informatics</a>
+        <ul class="visible-links">
+          
+            
+            <li class="masthead__menu-item">
+              <a href="http://localhost:4000/moer-mpg-rsgi-basics//units.html" >Course units</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="http://localhost:4000/moer-mpg-rsgi-basics//unit00/unit00-04_faq.html" >FAQ</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="https://ilias.uni-marburg.de/ilias.php?baseClass=ilRepositoryGUI&amp;client_id=UNIMR" >Zu ILIAS</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="https://oer.uni-marburg.de/goto.php?target=cat_1651239&client_id=UNIMR" >OER home</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="http://localhost:4000/moer-mpg-rsgi-basics//index.html" >Course home</a>
+            </li>
+          
+            
+            <li class="masthead__menu-item">
+              <a href="http://localhost:4000/moer-mpg-rsgi-basics//downloads.html" >Downloads</a>
+            </li>
+          
+        </ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle Menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero"
+  style=" background-image: url('');"
+>
+  
+    <img src="/moer-mpg-rsgi-basics/assets/images/working-environment.png" alt="Setting up the Working Environment" class="page__hero-image">
+  
+  
+    <span class="page__hero-caption"><a href="https://pixabay.com/de/users/joffi-1229850/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1359136">Image</a> <a href="https://pixabay.com/de/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=1359136">joffi via Pixabay</a>
+</span>
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+
+  <div class="sidebar sticky">
+  
+
+  
+    
+      
+      
+      
+    
+    
+	  
+        <nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle Menu</label>
+  <ul class="nav__items">
+    
+      
+      
+    
+      
+      
+    
+      
+      
+        
+        <li>
+          <span class="nav__sub-title">
+		     <a href="/moer-mpg-rsgi-basics//unit00/unit00-00_intro.html" class="">Some Formalities</a>
+		  </span>
+          <ul>
+            
+              
+			  
+			    <li><a href="/moer-mpg-rsgi-basics//unit00/unit00-00_intro.html" class="">Digital learning at a distance</a></li>
+			  
+            
+              
+			  
+			    <li><a href="/moer-mpg-rsgi-basics//unit00/unit00-01_notes_on_assignments.html" class="">Assignments</a></li>
+			  
+            
+              
+			  
+			    <li><a href="/moer-mpg-rsgi-basics//unit00/unit00-03_environment_setup.html" class="active">Setting up the Working Environment</a></li>
+			  
+            
+          </ul>
+        </li>
+	  
+    
+      
+      
+        
+        <li>
+          <span class="nav__sub-title">
+		     <a href="/moer-mpg-rsgi-basics//unit01/unit01-01_data_softwares.html" class="">Questions & Answers</a>
+		  </span>
+          <ul>
+            
+              
+			  
+            
+              
+			  
+            
+              
+			  
+            
+              
+			  
+            
+          </ul>
+        </li>
+	  
+    
+      
+      
+    
+      
+      
+        
+        <li>
+          <span class="nav__sub-title">
+		     <a href="/moer-mpg-rsgi-basics//unit05/unit05-01_spotlights.html" class="">Spotlights</a>
+		  </span>
+          <ul>
+            
+              
+			  
+            
+              
+			  
+            
+              
+			  
+            
+              
+			  
+            
+          </ul>
+        </li>
+	  
+    
+  </ul>
+</nav>
+	  
+    
+  
+  </div>
+  
+
+
+
+
+
+
+  <article class="page" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="Setting up the Working Environment">
+    <meta itemprop="description" content="We value freedom of choice as an important good but giving our long-term experience freedom of choice comes to an end when we talk about the mandatory working environment for this course. The reason for this is simple: you work with assignments and a piece of code written on the laptop of person A should run basically without any changes on the computer of person B. The situation gets nastier if you should test some code of a peer or if the instructors would like to run your script on their own system. Hence, let’s save everybody’s time and focus on the things which are really important. Once the course is finished, feel free to use any working environment structure you like.Setup of the environment in RSetting up a working or project environment usually requires the definition and creation of different folder paths, the loading of necessary R packages and additional functions that are “always” needed. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too.Setting up a working or project environment requires the definition of different folder paths and the loading of necessary R packages and additional functions. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too.For setting up a project environment, one can use a set-up script and the envimaR package.Coping with different absolute paths across different computersThe biggest problem when it comes to cross-computer project path environments is not the project environment itself, i.e. the subfolders of your project relative to your project folder but the absolute path to your project folder. Imagine you agreed on a project folder called mpg-envinsys-plygrnd. On the laptop of person A, the absolute path to the root folder might be C:\Users\UserA\University\mpg-envinsys-plygrnd while on the external hard disk of person B it might be X:\university_courses\mpg-envinsys-plygrnd. If you want to read from your data subfolder you have to change the absolute directory path depending on which computer the script is running. Not good.One solution to this problem is to agree on a common structure relative to your individual R home directory using symbolic links (Linux flavor systems) or junctions (Windows flavor systems).Example: Create a top-level folder name which hosts all of your student projects. For example, this folder is called edu. Within edu, the project folder of this course is called mpg-envinsys-plygrnd. Create the folder edu anywhere you want, e.g. at D:\stuff\important\edu. Then create a so called symbolic link to this folder within your R home directory i.e. the directory where path.expand(&quot;~&quot;) points to.To create this link on Windows flavor systems, start a command prompt window (e.g. press [Windows], type “CMD”, press [Return]) and change the directory of the command prompt window to your R home directory which is C:\Users\your-user-name\Documents by default. Then use the mklink \J command to create the symbolic link. In summary and given the paths above:cd C:\Users\your-user-name\Documentsmklink /J edu D:\stuff\important\eduOn Linux flavor systems, the R home directory is your home directory by default, i.e. /home/your-user-name/. If you create your edu folder on /media/memory/interesting/edu, the symbolic link can be created using your bash environment:cd /home/&lt;your-user-name&gt;/ln -s /media/memory/interesting/edu eduNow one can access the edu folder on both the windows and the Linux example via the home directory, i.e. ~/edu/. All problems solved.While this will work on all of your private computers, it will not work on the ones in the University’s computer lab. To handle that as smooth as possible, you can use the functionality of the envimaR package which allows to set defaults for all computers but one special type which is handled differently.Basic workflow of the setup procedureThere are two aspects we would draw your attention to:  Define everything once not twice: It is a good idea to define your projectfolder structure, the required libraries and other settings in one place. A simpleapproach would be a setup script, i.e. something like 000_setup.R that is sourcedinto each control or analysis script of your project.  Use the same project folder structure in a team: Use the same folder structurerelative to a fixed starting point across all computers and devices of your team.As a starting point, a folder in your home directory  (e.g. ~/edu) is a good choice.Within this folder you can directly store your projects or use a symlink to anyother place on your storage devices. 1Special considerations at our computer labsThe R home directory on the computers in the labs at Marburg University points tothe network drive H:/Documents. For storage space reasons, you could not usethis drive for symlinks. Therefore, you have to define an alternative starting pointfor your project folders to work with.To handle your project relative on all computers using something beneath your home directory ~ as a starting point except on one type of computer (i.e. theones in the University computer labs), we recommend to use the functionality ofthe envimaR package.Preliminary considerationAgain f the course we assume that  your local starting point is ~/edu,  your project is called mpg-envinsys-plygrnd,  your git repository is called name_of_github_team_repository,  your setup script is called 000_setup.R and is located at name_of_github_team_repository/src.Please install the envimaR package from GitHub.devtools::install_github(&quot;envima/envimaR&quot;)Template for setup scriptFirst of all copy and paste the following code in a file named 000_setup.R. You may use it as a tempate for a basic setup script which is called in the beginning of each analysis script you start.# Set project specific subfoldersprojectDirList   = c(&quot;data/&quot;,                # data folders the following are obligatory but you may add more                    &quot;data/auxdata/&quot;,                      &quot;data/aerial/org/&quot;,                    &quot;data/lidar/org/&quot;,                    &quot;data/lidar/&quot;,                    &quot;data/grass/&quot;,                    &quot;data/lidar/level1/&quot;,                    &quot;data/lidar/level2/&quot;,                    &quot;data/lidar/level0/&quot;,                    &quot;data/data_mof&quot;,                     &quot;data/tmp/&quot;,                    &quot;run/&quot;,                # folder for runtime data storage                    &quot;log/&quot;,                # logging                    &quot;src/&quot;,                # source code                    &quot;doc/&quot;,                # documentation                      &quot;name_of_github_team_repository/src/&quot;,   # source code github                    &quot;name_of_github_team_repository/doc/&quot;)   # markdown etc.  github# Set librarieslibs = c(&quot;link2GI&quot;, &quot;raster&quot;, &quot;rgdal&quot;, &quot;sp&quot;)# Automatically set root direcory, folder structure and load librariesenvrmt = createEnvi(root_folder = &quot;~/edu/mpg-envinsys-plygrnd&quot;,                     folders = project_folders,                     path_prefix = &quot;path_&quot;, libs = libs,                    alt_env_id = &quot;COMPUTERNAME&quot;, alt_env_value = &quot;PCRZP&quot;,                    alt_env_root_folder = &quot;F:\\BEN\\edu&quot;)                    # For the `raster` package set the temp directory to the one of  project foldersrasterOptions(tmpdir = envrmt$path_tmp)Automated procedureTo source the setup script, you should reference its location in the same manner as any other folder/file. Therefore, include something like this into the headerof your control or analysis scripts.# Source setup script ----------------------------------------------------------library(envimaR)root_folder = alternativeEnvi(root_folder = &quot;~/edu/mpg-envinsys-plygrnd&quot;,                               alt_env_id = &quot;COMPUTERNAME&quot;,                              alt_env_value = &quot;PCRZP&quot;,                               alt_env_root_folder = &quot;F:\\BEN\\edu&quot;)source(file.path(root_folder, &quot;name_of_github_team_repository/src/000_setup.R&quot;))One can now access the respective subfolders using the list entries of the variable envrmt. The entries are named according to the subfolder names with the prefix “path_”.print(envrmt$path_data_mof)## [1] &quot;C:/Users/tnauss/Documents/edu/mpg-envinsys-plygrnd/data/data_mof&quot;Linking more GI/RS Desktop SoftwareIf required, on can now go on in the setup script and link selected GIS software etc. using the link2GI package. This generaly starts looking for the respective installations (in case one does not know all the details).# Link GIS software ------------------------------------------------------------# link2GI has been loaded by the script# Find GRASS installationsgrass_path = findGRASS()# Find SAGA installationssaga_path = findSAGA()# Find OTB installationsotb_path = findOTB()This setup is a bit more than a guideline, it is a rule. Read it, learn it, live it and have a nice ride.More InformationFor a more advanced and automated project setup have also a look at the extended setup spotlight.For a bsic control script which may be useful as a template for a supporting structure of your script have a look at the spotlight Best Practice Scripts &amp; Functions in R">
+    <meta itemprop="datePublished" content="2022-03-11T20:51:16+01:00">
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title" itemprop="headline">Setting up the Working Environment
+</h1>
+          
+        </header>
+      
+
+      <section class="page__content" itemprop="text">
+        
+          <aside class="sidebar__right ">
+            <nav class="toc">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu">
+  <li><a href="#setup-of-the-environment-in-r">Setup of the environment in R</a></li>
+  <li><a href="#coping-with-different-absolute-paths-across-different-computers">Coping with different absolute paths across different computers</a></li>
+  <li><a href="#basic-workflow-of-the-setup-procedure">Basic workflow of the setup procedure</a>
+    <ul>
+      <li><a href="#special-considerations-at-our-computer-labs">Special considerations at our computer labs</a></li>
+      <li><a href="#preliminary-consideration">Preliminary consideration</a></li>
+    </ul>
+  </li>
+  <li><a href="#template-for-setup-script">Template for setup script</a>
+    <ul>
+      <li><a href="#automated-procedure">Automated procedure</a></li>
+      <li><a href="#linking-more-girs-desktop-software">Linking more GI/RS Desktop Software</a></li>
+    </ul>
+  </li>
+  <li><a href="#more-information">More Information</a></li>
+</ul>
+
+            </nav>
+          </aside>
+        
+        <p>We value freedom of choice as an important good but giving our long-term experience freedom of choice comes to an end when we talk about the mandatory working environment for this course. The reason for this is simple: you work with assignments and a piece of code written on the laptop of person A should run basically without any changes on the computer of person B. The situation gets nastier if you should test some code of a peer or if the instructors would like to run your script on their own system. Hence, let’s save everybody’s time and focus on the things which are really important. Once the course is finished, feel free to use any working environment structure you like.</p>
+
+<h2 id="setup-of-the-environment-in-r">Setup of the environment in R</h2>
+
+<p>Setting up a working or project environment usually requires the definition and creation of different folder paths, the loading of necessary R packages and additional functions that are “always” needed. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too.
+Setting up a working or project environment requires the definition of different folder paths and the loading of necessary R packages and additional functions. If additional software like GIS should also be accessible, respective binaries and software environments must be linked, too.</p>
+
+<p>For setting up a project environment, one can use a set-up script and the <code class="language-plaintext highlighter-rouge">envimaR</code> package.</p>
+
+<h2 id="coping-with-different-absolute-paths-across-different-computers">Coping with different absolute paths across different computers</h2>
+<p>The biggest problem when it comes to cross-computer project path environments is not the project environment itself, i.e. the subfolders of your project <em>relative</em> to your project folder but the <em>absolute</em> path to your project folder. Imagine you agreed on a project folder called mpg-envinsys-plygrnd. On the laptop of person A, the absolute path to the root folder might be <code class="language-plaintext highlighter-rouge">C:\Users\UserA\University\mpg-envinsys-plygrnd</code> while on the external hard disk of person B it might be <code class="language-plaintext highlighter-rouge">X:\university_courses\mpg-envinsys-plygrnd</code>. If you want to read from your data subfolder you have to change the absolute directory path depending on which computer the script is running. Not good.</p>
+
+<p class="notice--success">One solution to this problem is to agree on a common structure <em>relative</em> to your individual R home directory using symbolic links (Linux flavor systems) or junctions (Windows flavor systems).</p>
+
+<p>Example: Create a top-level folder name which hosts all of your student projects. For example, this folder is called <code class="language-plaintext highlighter-rouge">edu</code>. Within <code class="language-plaintext highlighter-rouge">edu</code>, the project folder of this course is called <code class="language-plaintext highlighter-rouge">mpg-envinsys-plygrnd</code>. Create the folder <code class="language-plaintext highlighter-rouge">edu</code> anywhere you want, e.g. at <code class="language-plaintext highlighter-rouge">D:\stuff\important\edu</code>. Then create a so called symbolic link to this folder within your R home directory i.e. the directory where <code class="language-plaintext highlighter-rouge">path.expand("~")</code> points to.</p>
+
+<p>To create this link on Windows flavor systems, start a command prompt window (e.g. press [Windows], type “CMD”, press [Return]) and change the directory of the command prompt window to your R home directory which is <code class="language-plaintext highlighter-rouge">C:\Users\your-user-name\Documents</code> by default. Then use the <code class="language-plaintext highlighter-rouge">mklink \J</code> command to create the symbolic link. In summary and given the paths above:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">cd C:\Users\your-user-name\Documents</span>
+<span class="s">mklink /J edu D:\stuff\important\edu</span>
+</code></pre></div></div>
+
+<p>On Linux flavor systems, the R home directory is your home directory by default, i.e. <code class="language-plaintext highlighter-rouge">/home/your-user-name/</code>. If you create your edu folder on <code class="language-plaintext highlighter-rouge">/media/memory/interesting/edu</code>, the symbolic link can be created using your bash environment:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">cd /home/&lt;your-user-name&gt;/</span>
+<span class="s">ln -s /media/memory/interesting/edu edu</span>
+</code></pre></div></div>
+<p>Now one can access the <code class="language-plaintext highlighter-rouge">edu</code> folder on both the windows and the Linux example via the home directory, i.e. <code class="language-plaintext highlighter-rouge">~/edu/</code>. All problems solved.</p>
+
+<p class="notice--info">While this will work on all of your private computers, it will not work on the ones in the University’s computer lab. To handle that as smooth as possible, you can use the functionality of the envimaR package which allows to set defaults for all computers but one special type which is handled differently.</p>
+
+<h2 id="basic-workflow-of-the-setup-procedure">Basic workflow of the setup procedure</h2>
+
+<p>There are two aspects we would draw your attention to:</p>
+<ol>
+  <li>Define everything once not twice: It is a good idea to define your project
+folder structure, the required libraries and other settings in one place. A simple
+approach would be a setup script, i.e. something like <code class="language-plaintext highlighter-rouge">000_setup.R</code> that is sourced
+into each control or analysis script of your project.</li>
+  <li>Use the same project folder structure in a team: Use the same folder structure
+relative to a fixed starting point across all computers and devices of your team.
+As a starting point, a folder in your home directory  (e.g. <code class="language-plaintext highlighter-rouge">~/edu</code>) is a good choice.
+Within this folder you can directly store your projects or use a symlink to any
+other place on your storage devices. 1</li>
+</ol>
+
+<h3 id="special-considerations-at-our-computer-labs">Special considerations at our computer labs</h3>
+<p>The R home directory on the computers in the labs at Marburg University points to
+the network drive <code class="language-plaintext highlighter-rouge">H:/Documents</code>. For storage space reasons, you could not use
+this drive for symlinks. Therefore, you have to define an alternative starting point
+for your project folders to work with.</p>
+
+<p>To handle your project relative on all computers using something beneath your 
+home directory <code class="language-plaintext highlighter-rouge">~</code> as a starting point except on one type of computer (i.e. the
+ones in the University computer labs), we recommend to use the functionality of
+the <code class="language-plaintext highlighter-rouge">envimaR</code> package.</p>
+
+<h3 id="preliminary-consideration">Preliminary consideration</h3>
+<p>Again f the course we assume that</p>
+<ul>
+  <li>your local starting point is <code class="language-plaintext highlighter-rouge">~/edu</code>,</li>
+  <li>your project is called <code class="language-plaintext highlighter-rouge">mpg-envinsys-plygrnd</code>,</li>
+  <li>your git repository is called <code class="language-plaintext highlighter-rouge">name_of_github_team_repository</code>,</li>
+  <li>your setup script is called <code class="language-plaintext highlighter-rouge">000_setup.R</code> and is located at <code class="language-plaintext highlighter-rouge">name_of_github_team_repository/src</code>.</li>
+</ul>
+
+<p>Please install the <code class="language-plaintext highlighter-rouge">envimaR</code> package from GitHub.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">devtools</span><span class="o">::</span><span class="n">install_github</span><span class="p">(</span><span class="s2">"envima/envimaR"</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="template-for-setup-script">Template for setup script</h2>
+
+<p>First of all copy and paste the following code in a file named <code class="language-plaintext highlighter-rouge">000_setup.R</code>. You may use it as a tempate for a basic setup script which is called in the beginning of each analysis script you start.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Set project specific subfolders</span><span class="w">
+</span><span class="n">projectDirList</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"data/"</span><span class="p">,</span><span class="w">                </span><span class="c1"># data folders the following are obligatory but you may add more</span><span class="w">
+                    </span><span class="s2">"data/auxdata/"</span><span class="p">,</span><span class="w">  
+                    </span><span class="s2">"data/aerial/org/"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"data/lidar/org/"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"data/lidar/"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"data/grass/"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"data/lidar/level1/"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"data/lidar/level2/"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"data/lidar/level0/"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"data/data_mof"</span><span class="p">,</span><span class="w"> 
+                    </span><span class="s2">"data/tmp/"</span><span class="p">,</span><span class="w">
+                    </span><span class="s2">"run/"</span><span class="p">,</span><span class="w">                </span><span class="c1"># folder for runtime data storage</span><span class="w">
+                    </span><span class="s2">"log/"</span><span class="p">,</span><span class="w">                </span><span class="c1"># logging</span><span class="w">
+                    </span><span class="s2">"src/"</span><span class="p">,</span><span class="w">                </span><span class="c1"># source code</span><span class="w">
+                    </span><span class="s2">"doc/"</span><span class="p">,</span><span class="w">                </span><span class="c1"># documentation  </span><span class="w">
+                    </span><span class="s2">"name_of_github_team_repository/src/"</span><span class="p">,</span><span class="w">   </span><span class="c1"># source code github</span><span class="w">
+                    </span><span class="s2">"name_of_github_team_repository/doc/"</span><span class="p">)</span><span class="w">   </span><span class="c1"># markdown etc.  github</span><span class="w">
+</span><span class="c1"># Set libraries</span><span class="w">
+</span><span class="n">libs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s2">"link2GI"</span><span class="p">,</span><span class="w"> </span><span class="s2">"raster"</span><span class="p">,</span><span class="w"> </span><span class="s2">"rgdal"</span><span class="p">,</span><span class="w"> </span><span class="s2">"sp"</span><span class="p">)</span><span class="w">
+
+
+</span><span class="c1"># Automatically set root direcory, folder structure and load libraries</span><span class="w">
+</span><span class="n">envrmt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">createEnvi</span><span class="p">(</span><span class="n">root_folder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"~/edu/mpg-envinsys-plygrnd"</span><span class="p">,</span><span class="w"> 
+                    </span><span class="n">folders</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">project_folders</span><span class="p">,</span><span class="w"> 
+                    </span><span class="n">path_prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"path_"</span><span class="p">,</span><span class="w"> </span><span class="n">libs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">libs</span><span class="p">,</span><span class="w">
+                    </span><span class="n">alt_env_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"COMPUTERNAME"</span><span class="p">,</span><span class="w"> </span><span class="n">alt_env_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"PCRZP"</span><span class="p">,</span><span class="w">
+                    </span><span class="n">alt_env_root_folder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"F:\\BEN\\edu"</span><span class="p">)</span><span class="w">
+                    
+</span><span class="c1"># For the `raster` package set the temp directory to the one of  project folders</span><span class="w">
+
+</span><span class="n">rasterOptions</span><span class="p">(</span><span class="n">tmpdir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">envrmt</span><span class="o">$</span><span class="n">path_tmp</span><span class="p">)</span><span class="w">
+
+</span></code></pre></div></div>
+
+<h3 id="automated-procedure">Automated procedure</h3>
+
+<p>To source the setup script, you should reference its location in the same manner 
+as any other folder/file. Therefore, include something like this into the header
+of your control or analysis scripts.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Source setup script ----------------------------------------------------------</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">envimaR</span><span class="p">)</span><span class="w">
+</span><span class="n">root_folder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">alternativeEnvi</span><span class="p">(</span><span class="n">root_folder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"~/edu/mpg-envinsys-plygrnd"</span><span class="p">,</span><span class="w"> 
+                              </span><span class="n">alt_env_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"COMPUTERNAME"</span><span class="p">,</span><span class="w">
+                              </span><span class="n">alt_env_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"PCRZP"</span><span class="p">,</span><span class="w"> 
+                              </span><span class="n">alt_env_root_folder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"F:\\BEN\\edu"</span><span class="p">)</span><span class="w">
+</span><span class="n">source</span><span class="p">(</span><span class="n">file.path</span><span class="p">(</span><span class="n">root_folder</span><span class="p">,</span><span class="w"> </span><span class="s2">"name_of_github_team_repository/src/000_setup.R"</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<p>One can now access the respective subfolders using the list entries of the variable <code class="language-plaintext highlighter-rouge">envrmt</code>. The entries are named according to the subfolder names with the prefix “path_”.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">print</span><span class="p">(</span><span class="n">envrmt</span><span class="o">$</span><span class="n">path_data_mof</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "C:/Users/tnauss/Documents/edu/mpg-envinsys-plygrnd/data/data_mof"
+</code></pre></div></div>
+
+<h3 id="linking-more-girs-desktop-software">Linking more GI/RS Desktop Software</h3>
+<p>If required, on can now go on in the setup script and link selected GIS software etc. using the link2GI package. This generaly starts looking for the respective installations (in case one does not know all the details).</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Link GIS software ------------------------------------------------------------</span><span class="w">
+</span><span class="c1"># link2GI has been loaded by the script</span><span class="w">
+
+</span><span class="c1"># Find GRASS installations</span><span class="w">
+</span><span class="n">grass_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findGRASS</span><span class="p">()</span><span class="w">
+
+</span><span class="c1"># Find SAGA installations</span><span class="w">
+</span><span class="n">saga_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findSAGA</span><span class="p">()</span><span class="w">
+
+</span><span class="c1"># Find OTB installations</span><span class="w">
+</span><span class="n">otb_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">findOTB</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<p class="notice--danger">This setup is a bit more than a guideline, it is a rule. Read it, learn it, live it and have a nice ride.</p>
+
+<h2 id="more-information">More Information</h2>
+
+<p>For a more advanced and automated project setup have also a look at the <a href="/moer-mpg-rsgi-basics//unit05/unit05-02_extended_setup.html">extended setup spotlight</a>.</p>
+
+<p>For a bsic control script which may be useful as a template for a supporting structure of your script have a look at the spotlight <a href="/moer-mpg-rsgi-basics//unit05/unit05-05_best_scripting.html">Best Practice Scripts &amp; Functions in R</a></p>
+
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+
+        
+          <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i> Updated:</strong> <time datetime="2022-03-11T20:51:16+01:00">March 11, 2022</time></p>
+        
+      </footer>
+
+      
+
+      
+  <nav class="pagination">
+    
+      <a href="/moer-mpg-rsgi-basics/unit00/unit00-01_notes_on_assignments.html" class="pagination--pager" title="Assignments
+">Previous</a>
+    
+    
+      <a href="#" class="pagination--pager disabled">Next</a>
+    
+  </nav>
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+    
+      <li><a href="https://twitter.com/creuden"><i class="fab fa-fw fa-twitter-square" aria-hidden="true"></i> Twitter</a></li>
+    
+    
+    
+      <li><a href="https://github.com/GeoMOER"><i class="fab fa-fw fa-github" aria-hidden="true"></i> GitHub</a></li>
+    
+    
+    
+    <li><a href="http://localhost:4000/moer-mpg-rsgi-basics/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+  </ul>
+</div>
+
+<div class="page__footer-copyright"> <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a> &copy; 2022 Lab of Environmental Informatics
+. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a>, <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a> &amp; <a href="https://www.uni-marburg.de/fb19" rel="nofollow">Geography@Marburg University</a>.</div>
+
+
+
+      </footer>
+    </div>
+
+    
+  <script src="/moer-mpg-rsgi-basics/assets/js/main.min.js"></script>
+  <script src="https://kit.fontawesome.com/4eee35f757.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
